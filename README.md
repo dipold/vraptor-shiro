@@ -6,9 +6,11 @@ VRaptor Apache Shiro Plugin provides support to security authentication, authori
 
 ### Configuração Básica/Obrigatória
 
-A configuração básica/obrigatória exige que sejam implementados duas interfaces:
-  1. <code>RestrictionsListener</code>
-    A implementação dessa interface deve ser feita em seu <code>@Controller</code> e serve para que você decida o destino do seu usuário caso ele se confronte com um problema de autenticação ou autorização. Exemplo:
+A configuração básica/obrigatória exige que sejam implementados as seguintes interfaces:
+
+* <code>RestrictionsListener</code>
+
+	A implementação dessa interface deve ser feita em seu <code>@Controller</code> e serve para que você decida o destino do seu usuário caso ele se confronte com um problema de autenticação ou autorização. Exemplo:
 
 ```java
 @Controller
@@ -30,8 +32,9 @@ public class AuthController implements RestrictionsListener {
 }
 ```
     
-  2. <code>Permission</code>
-    A implementação dessa interface serve para fazer a ponte entre os dados dos usuários que estão disponíveis em seu banco de dados, arquivo.ini, etc. para o plugin.
+* <code>Permission</code>
+
+	A implementação dessa interface serve para fazer a ponte entre os dados dos usuários que estão disponíveis em seu banco de dados, arquivo.ini, etc. para o plugin.
   
 ```java
 public class AuthService implements Permission {
@@ -56,12 +59,14 @@ public class AuthService implements Permission {
 }
 ```
 
-  3. <code>AuthenticationListener</code> (Opcional)
-    A implementação dessa interface é opcional e serve para observar quando um usuário logar ou deslogar da sessão.
+* <code>AuthenticationListener</code> (Opcional)
 
-### Uso 
+	A implementação dessa interface é opcional e serve para observar quando um usuário logar ou deslogar da sessão.
+
+### Considerações
 
 É necessário criptografar as senhas do usuário, para isso o plugin fornece a interface <code>PasswordService</code> que tem como objetivo único fornecer uma interface simples para criptografia.
+
 Exemplo:
 
 ```java
@@ -77,6 +82,7 @@ public class UsuarioDAO {
 ```
  
 Para fazer o login das credenciais do usuário você pode usar a interface <code>Subject</code> que em uma definição simplória representa o usuário corrente.
+
 Caso seja necessário "salvar" mais dados em sessão, o plugin também fornece a interface <code>Session</code>.
 Exemplo:
 
@@ -129,29 +135,48 @@ public class SecuredClass {
 ```
 
 Para tornar um elemento seguro, em conjunto com a anotação <code>@Secured</code>, deve ser usado uma das seguintes anotações:
-  1. Para autenticação:
-    a. <code>@RequiresUser</code>
-      Onde o "subject" é definido como o usuário corrente que teve suas credenciais autenticadas ou lembradas em momento ou sessão anterior. 
-    b. <code>@RequiresAuthentication</code>
-      Onde o "subject" é definido como o usuário corrente que possui suas credenciais autenticadas na sessão atual.
-    c. <code>@RequiresGuest</code>
-      Onde o "subject" é definido como o usuário corrente que não possui suas credenciais autenticadas em nenhum momento (usuário anônimo).
-  2. Para autorização:
-    d. <code>@RequiresRoles</code>
-      Define que apenas o usuário autenticado e pertencente a determinado perfil (role) possa executar 
-    e. <code>@RequiresPermissions</code>
-      Define que apenas o usuário autenticado e com determinada permissão possa executar. As permissções são definidas por uma string e pode ser usada em conjunto com o coringa * para designar acesso universal.
+
+1. Para autenticação:
+
+	<code>@RequiresUser</code>
+	Onde o "subject" é definido como o usuário corrente que teve suas credenciais autenticadas ou lembradas em momento ou sessão anterior. 
+	
+	<code>@RequiresAuthentication</code>
+	Onde o "subject" é definido como o usuário corrente que possui suas credenciais autenticadas na sessão atual.
+      
+	<code>@RequiresGuest</code>
+	Onde o "subject" é definido como o usuário corrente que não possui suas credenciais autenticadas em nenhum momento (usuário anônimo).
+      
+2. Para autorização:
+
+	<code>@RequiresRoles</code>
+	Define que apenas o usuário autenticado e pertencente a determinado perfil (role) possa executar 
+      
+	<code>@RequiresPermissions</code>
+	Define que apenas o usuário autenticado e com determinada permissão possa executar. As permissções são definidas por uma string e pode ser usada em conjunto com o coringa * para designar acesso universal.
+      
 	Exemplos:
+	
 		printer:hp1100:view
+
 		printer:hp1100:manage
+		
 		printer:hp1100:print
+		
 		printer:lp7200:view
+		
 		printer:lp7200:manage
+		
 		printer:lp7200:print
+		
 	E um perfil(role) pode possuir permissões de:
+	
 		printer:*
+		
 		printer:*:view
+		
 		printer:hp1100:*
+		
 		printer:hp1100:manage      
 
 As anotações de autenticação ou de autorização podem ser usadas a nível de método, de classe, de super classe ou de interface.
@@ -174,7 +199,7 @@ public class SecuredClass {
 }
 ```
 
-### Configuração/Uso via Programaticamente
+### Programaticamente
 
 É possível a configuração/uso do plugin sem anotações, o que permite maior controle/dinamismo em seu projeto.
 Exemplo:
