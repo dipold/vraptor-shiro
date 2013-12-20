@@ -8,24 +8,19 @@ VRaptor Apache Shiro Plugin provides support to security authentication, authori
 
 A configuração básica/obrigatória exige que sejam implementados as seguintes interfaces:
 
-* <code>RestrictionsListener</code>
+* <code>AuthorizationRestrictionListener</code>
 
 	A implementação dessa interface deve ser feita em seu <code>@Controller</code> e serve para que você decida o destino do seu usuário caso ele se confronte com um problema de autenticação ou autorização. Exemplo:
 
 ```java
 @Controller
 public class AuthController implements RestrictionsListener {
+	@Inject private Result result;
+	
 	@Override
-	public void onUnauthenticatedRestriction(UnauthenticatedException e) {
+	public void onAuthorizationRestriction(AuthorizationException e) {
 		result.include("error", e.toString());
 		result.forwardTo(LoginController.class).formLogin();
-		//OR
-		result.use(Results.status()).forbidden(e.toString());		
-	}
-	@Override
-	public void onUnauthorizedRestriction(UnauthorizedException e) {
-		result.include("error", e.toString());
-		result.forwardTo(LoginController.class).accessDeniedPage();
 		//OR
 		result.use(Results.status()).forbidden(e.toString());		
 	}
@@ -34,7 +29,7 @@ public class AuthController implements RestrictionsListener {
     
 * <code>Permission</code>
 
-	A implementação dessa interface serve para fazer a ponte entre os dados dos usuários que estão disponíveis em seu banco de dados, arquivo.ini, etc. para o plugin.
+	A implementação dessa interface serve para fazer a ponte entre os dados dos usuários que estão disponíveis em seu banco de dados, arquivo.ini, etc. para o plugin. Exemplo:
   
 ```java
 public class AuthService implements Permission {
@@ -62,6 +57,10 @@ public class AuthService implements Permission {
 * <code>AuthenticationListener</code> (Opcional)
 
 	A implementação dessa interface é opcional e serve para observar quando um usuário logar ou deslogar da sessão.
+
+* <code>SessionListener</code> (Opcional)
+
+	A implementação dessa interface é opcional e serve para observar quando a sessão de um usuário inicia, finaliza ou expira.
 
 ### Considerações
 
@@ -129,7 +128,7 @@ Quanto de método:
   
 ```java
 public class SecuredClass {
-	public boolean bazingaMethod() {}
+	public boolean publicMethod() {}
 	@Secured @RequiresAuthentication public boolean requiresAuthentication() {}
 }
 ```
@@ -153,7 +152,7 @@ Para tornar um elemento seguro, em conjunto com a anotação <code>@Secured</cod
 	Define que apenas o usuário autenticado e pertencente a determinado perfil (role) possa executar 
       
 	<code>@RequiresPermissions</code>
-	Define que apenas o usuário autenticado e com determinada permissão possa executar. As permissções são definidas por uma string e pode ser usada em conjunto com o coringa * para designar acesso universal.
+	Define que apenas o usuário autenticado e com determinada permissão possa executar. As permissões são definidas por uma string e pode ser usada em conjunto com o coringa * para designar acesso universal.
       
 	Exemplos:
 	
@@ -179,7 +178,7 @@ Para tornar um elemento seguro, em conjunto com a anotação <code>@Secured</cod
 		
 		printer:hp1100:manage      
 
-As anotações de autenticação ou de autorização podem ser usadas a nível de método, de classe, de super classe ou de interface.
+As anotações de autenticação ou de autorização podem ser usadas a nível de método ou de classe.
 Exemplo: 
 
 ```java
@@ -219,3 +218,115 @@ public class SecuredClass {
 	public boolean requiresPermissionReadWriteDoc() { if (currentUser.isPermittedAll(Arrays.AsList("doc:read", "doc:write"))) {...} }
 }
 ```
+
+## Tags JSP/JSTL
+
+Apache Shiro provê o uso de tags JSP ou JSTL para gerenciar o conteúdo de suas páginas baseado no estado do usuário corrente.
+
+### Configuração
+
+Para usar qualquer uma das tags existentes, adicione a Tag Library Descriptor (TDL) abaixo no cabeçalho de seu arquivo JSP:
+
+```
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
+```
+
+### Uso
+
+#### Guest Tag
+
+A tag <code>guest</code> irá mostrar o conteúdo envolto apenas se o atual usuário não estiver logado (usuário anônimo). Exemplo:
+
+```
+<shiro:guest>
+	Olá!  Por favor <a href="/login">Acesse sua Conta</a> ou <a href="/cadastro">Cadastre-se</a> agora!
+</shiro:guest>
+```
+
+#### User Tag
+
+A tag <code>user</code> irá mostrar o conteúdo envolto caso o usuário atual tiver sido previamente logado.
+
+```
+<shiro:user>
+    Bem vindo João!  Você não é João? Clique <a href="/login">aqui<a> para acessar sua conta.
+</shiro:user>
+```
+
+#### Authenticated e NotAuthenticated Tag
+
+A tag <code>authenticated</code> irá mostrar o conteúdo envolto caso o usuário atual tenha se logado com sucesso durante a sessão atual. 
+Essa tag é mais restritiva que a tag <code>user</code> e é logicamente oposta a tag <code>notAuthenticated</code>.
+
+```
+<shiro:authenticated>
+    <a href="/atualizaCadastro">Atualize as informações de seu cartão de crédito</a>.
+</shiro:authenticated>
+
+<shiro:notAuthenticated>
+    Por favor, <a href="/login">Insira suas Credenciais</a> para atualizar as informações de seu cartão de crédito.
+</shiro:notAuthenticated>
+```
+
+#### Principal Tag
+
+A tag <code>principal</code> mostrar o nome do usuário atual:
+
+```
+Olá, <shiro:principal property="username"/>, como vai você?
+```
+
+Essa tag é equivalente a:
+
+```
+Olá, <%= SecurityUtils.getSubject().getPrincipals().oneByType(User.class).getUsername().toString() %>, como vai você?
+```
+
+#### HasRole e LacksRole Tag
+
+A tag <code>hasRole</code> mostrará o conteúdo envolto se usuário atual é pertencente ao perfil indicado.
+Essa tag é logicamente oposta a tag <code>lacksRole</code>:
+
+```
+<shiro:hasRole name="admin">
+    <a href="/admin">Acesso ao Administrador</a>
+</shiro:hasRole>
+
+<shiro:lacksRole name="admin">
+    Lamento, mas você não tem permissão para acessar área administrativa.
+</shiro:lacksRole>
+```
+
+#### HasAnyRoles Tag
+
+A tag <code>hasAnyRoles</code> mostrará o conteúdo envolto se usuário atual é pertencente a qualquer um dos perfis indicados.
+
+```
+<shiro:hasAnyRoles name="desenvolvedor, gerente de projeto, admin">
+    Você é um desenvolvedor, gerente de projeto ou administrador.
+</shiro:hasAnyRoles>
+```
+
+#### HasPermission e LacksPermission Tag
+
+A tag <code>hasPermission</code> mostrará o conteúdo envolto se usuário atual é possui a permissão/habilidade especificada.
+Essa tag é logicamente oposta a tag <code>lacksPermission</code>:
+
+```
+<shiro:hasPermission name="user:create">
+    <a href="/formUser">Cadastrar novo Usuário</a>
+</shiro:hasPermission>
+
+<shiro:lacksPermission name="user:delete">
+    Lamento, mas você não possui permissão para remover contas de usuário.
+</shiro:lacksPermission>
+
+<shiro:lacksPermission name="user:*">
+    Lamento, mas você não possui permissão para qualquer ação com contas de usuário
+</shiro:lacksPermission>
+```
+
+
+## Gerenciamento de Sessão
+
+

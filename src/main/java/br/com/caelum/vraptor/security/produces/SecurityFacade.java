@@ -1,6 +1,8 @@
 package br.com.caelum.vraptor.security.produces;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Any;
@@ -15,42 +17,53 @@ import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.apache.shiro.authc.credential.PasswordMatcher;
 import org.apache.shiro.authc.credential.PasswordService;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
-import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.SessionListener;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import br.com.caelum.vraptor.security.realm.CustomAuthorizingRealm;
-
-import com.google.common.collect.Iterables;
 
 @Singleton 
 public class SecurityFacade {
 
-	@Inject private CustomAuthorizingRealm realm;
+	@Inject private Realm realm;
 	@Inject @Any private Instance<AuthenticationListener> authenticationListeners;
+	@Inject @Any private Instance<SessionListener> sessionListeners;
 	
 	private static final Logger log = LoggerFactory.getLogger(SecurityFacade.class);
 	
 	@PostConstruct
 	public void init() {
 		log.info("Initializing Shiro SecurityManager");
-		
+
 		//TODO: Tornar a criptografia dos passwords opcional
-		realm.setCredentialsMatcher(new PasswordMatcher());
+		((AuthorizingRealm)realm).setCredentialsMatcher(new PasswordMatcher());
 		
 		ModularRealmAuthenticator authenticator = new ModularRealmAuthenticator();
-		authenticator.setAuthenticationListeners(Arrays.asList(Iterables.toArray(authenticationListeners, AuthenticationListener.class)));
-		authenticator.setRealms(Arrays.asList((Realm)realm));
+		authenticator.setAuthenticationListeners(toCollection(authenticationListeners));
+		authenticator.setRealms(Arrays.asList(realm));
+		
+		DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
+		sessionManager.setSessionListeners(toCollection(sessionListeners));
 
-//		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager(realm);
-		DefaultSecurityManager securityManager = new DefaultSecurityManager(realm);
+		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager(Arrays.asList(realm));
 		securityManager.setAuthenticator(authenticator);
+		securityManager.setSessionManager(sessionManager);
 		
 		SecurityUtils.setSecurityManager(securityManager);
+	}
+	
+	private <E> Collection<E> toCollection(Iterable<E> iterable) {
+		Collection<E> list = new ArrayList<E>();
+		for (E item : iterable) {
+	    	list.add(item);
+		} 
+		return list;
 	}
 
 	@Produces
