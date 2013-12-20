@@ -227,7 +227,7 @@ Apache Shiro provê o uso de tags JSP ou JSTL para gerenciar o conteúdo de suas
 
 Para usar qualquer uma das tags existentes, adicione a Tag Library Descriptor (TDL) abaixo no cabeçalho de seu arquivo JSP:
 
-```
+```jsp
 <%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 ```
 
@@ -237,7 +237,7 @@ Para usar qualquer uma das tags existentes, adicione a Tag Library Descriptor (T
 
 A tag <code>guest</code> irá mostrar o conteúdo envolto apenas se o atual usuário não estiver logado (usuário anônimo). Exemplo:
 
-```
+```jsp
 <shiro:guest>
 	Olá!  Por favor <a href="/login">Acesse sua Conta</a> ou <a href="/cadastro">Cadastre-se</a> agora!
 </shiro:guest>
@@ -247,7 +247,7 @@ A tag <code>guest</code> irá mostrar o conteúdo envolto apenas se o atual usu�
 
 A tag <code>user</code> irá mostrar o conteúdo envolto caso o usuário atual tiver sido previamente logado.
 
-```
+```jsp
 <shiro:user>
     Bem vindo João!  Você não é João? Clique <a href="/login">aqui<a> para acessar sua conta.
 </shiro:user>
@@ -258,7 +258,7 @@ A tag <code>user</code> irá mostrar o conteúdo envolto caso o usuário atual t
 A tag <code>authenticated</code> irá mostrar o conteúdo envolto caso o usuário atual tenha se logado com sucesso durante a sessão atual. 
 Essa tag é mais restritiva que a tag <code>user</code> e é logicamente oposta a tag <code>notAuthenticated</code>.
 
-```
+```jsp
 <shiro:authenticated>
     <a href="/atualizaCadastro">Atualize as informações de seu cartão de crédito</a>.
 </shiro:authenticated>
@@ -272,13 +272,13 @@ Essa tag é mais restritiva que a tag <code>user</code> e é logicamente oposta 
 
 A tag <code>principal</code> mostrar o nome do usuário atual:
 
-```
+```jsp
 Olá, <shiro:principal property="username"/>, como vai você?
 ```
 
 Essa tag é equivalente a:
 
-```
+```jsp
 Olá, <%= SecurityUtils.getSubject().getPrincipals().oneByType(User.class).getUsername().toString() %>, como vai você?
 ```
 
@@ -287,7 +287,7 @@ Olá, <%= SecurityUtils.getSubject().getPrincipals().oneByType(User.class).getUs
 A tag <code>hasRole</code> mostrará o conteúdo envolto se usuário atual é pertencente ao perfil indicado.
 Essa tag é logicamente oposta a tag <code>lacksRole</code>:
 
-```
+```jsp
 <shiro:hasRole name="admin">
     <a href="/admin">Acesso ao Administrador</a>
 </shiro:hasRole>
@@ -301,7 +301,7 @@ Essa tag é logicamente oposta a tag <code>lacksRole</code>:
 
 A tag <code>hasAnyRoles</code> mostrará o conteúdo envolto se usuário atual é pertencente a qualquer um dos perfis indicados.
 
-```
+```jsp
 <shiro:hasAnyRoles name="desenvolvedor, gerente de projeto, admin">
     Você é um desenvolvedor, gerente de projeto ou administrador.
 </shiro:hasAnyRoles>
@@ -312,7 +312,7 @@ A tag <code>hasAnyRoles</code> mostrará o conteúdo envolto se usuário atual �
 A tag <code>hasPermission</code> mostrará o conteúdo envolto se usuário atual é possui a permissão/habilidade especificada.
 Essa tag é logicamente oposta a tag <code>lacksPermission</code>:
 
-```
+```jsp
 <shiro:hasPermission name="user:create">
     <a href="/formUser">Cadastrar novo Usuário</a>
 </shiro:hasPermission>
@@ -325,8 +325,5 @@ Essa tag é logicamente oposta a tag <code>lacksPermission</code>:
     Lamento, mas você não possui permissão para qualquer ação com contas de usuário
 </shiro:lacksPermission>
 ```
-
-
-## Gerenciamento de Sessão
 
 
