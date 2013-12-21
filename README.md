@@ -4,4 +4,4 @@ VRaptor Apache Shiro Plugin provides support to security authentication, authori
 
 ## Documentation
 
-* [WikiPage](https://github.com/dipold/vraptor-plugin-shiro/edit/master/README.md)
+* [WikiPage](https://github.com/dipold/vraptor-plugin-shiro/wiki)
