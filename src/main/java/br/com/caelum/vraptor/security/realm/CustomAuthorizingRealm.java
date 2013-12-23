@@ -18,9 +18,9 @@ import br.com.caelum.vraptor.security.User;
 import br.com.caelum.vraptor.security.Permission;
 
 public class CustomAuthorizingRealm extends AuthorizingRealm {
-	
+
 	@Inject private Permission permission;
-	
+
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 		UsernamePasswordToken upToken = (UsernamePasswordToken)token;
@@ -28,7 +28,7 @@ public class CustomAuthorizingRealm extends AuthorizingRealm {
 		if (user == null) {
             throw new AuthenticationException();
         }
-		return new SimpleAuthenticationInfo(user, user.getHashedPassword(), getName());
+		return new SimpleAuthenticationInfo(user, user.getPassword(), getName());
 	}
 
 	@Override

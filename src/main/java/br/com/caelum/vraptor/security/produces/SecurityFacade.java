@@ -14,7 +14,6 @@ import javax.inject.Singleton;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationListener;
 import org.apache.shiro.authc.credential.DefaultPasswordService;
-import org.apache.shiro.authc.credential.PasswordMatcher;
 import org.apache.shiro.authc.credential.PasswordService;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.mgt.SecurityManager;
@@ -28,22 +27,22 @@ import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.caelum.vraptor.security.strategy.ShiroInitConfigStrategy;
+
 @Singleton 
 public class SecurityFacade {
 
-	@Inject private Realm realm;
 	@Inject @Any private Instance<AuthenticationListener> authenticationListeners;
 	@Inject @Any private Instance<SessionListener> sessionListeners;
-	
+	@Inject private Instance<ShiroInitConfigStrategy> shiroInitConfigStrategy;
+	@Inject private Realm realm;
+
 	private static final Logger log = LoggerFactory.getLogger(SecurityFacade.class);
-	
+
 	@PostConstruct
 	public void init() {
 		log.info("Initializing Shiro SecurityManager");
 
-		//TODO: Tornar a criptografia dos passwords opcional
-		((AuthorizingRealm)realm).setCredentialsMatcher(new PasswordMatcher());
-		
 		ModularRealmAuthenticator authenticator = new ModularRealmAuthenticator();
 		authenticator.setAuthenticationListeners(toCollection(authenticationListeners));
 		authenticator.setRealms(Arrays.asList(realm));
@@ -54,15 +53,19 @@ public class SecurityFacade {
 		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager(Arrays.asList(realm));
 		securityManager.setAuthenticator(authenticator);
 		securityManager.setSessionManager(sessionManager);
+
+		if (!shiroInitConfigStrategy.isUnsatisfied()) {
+			shiroInitConfigStrategy.get().init(securityManager, (AuthorizingRealm)realm);
+		}
 		
 		SecurityUtils.setSecurityManager(securityManager);
 	}
-	
+
 	private <E> Collection<E> toCollection(Iterable<E> iterable) {
 		Collection<E> list = new ArrayList<E>();
 		for (E item : iterable) {
 	    	list.add(item);
-		} 
+		}
 		return list;
 	}
 

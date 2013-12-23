@@ -1,15 +1,19 @@
 package br.com.caelum.vraptor.security;
 
-public class User {
+import java.io.Serializable;
 
+public class User implements Serializable {
+
+	private static final long serialVersionUID = 984641961658723523L;
+	
 	private String username;
-	private String hashedPassword;
+	private String password;
 
 	public User() {}
 
-	public User(String username, String hashedPassword) {
+	public User(String username, String password) {
 		this.username = username;
-		this.hashedPassword = hashedPassword;
+		this.password = password;
 	}
 
 	public String getUsername() {
@@ -20,11 +24,11 @@ public class User {
 		this.username = username;
 	}
 
-	public String getHashedPassword() {
-		return hashedPassword;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setHashedPassword(String hashedPassword) {
-		this.hashedPassword = hashedPassword;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }
