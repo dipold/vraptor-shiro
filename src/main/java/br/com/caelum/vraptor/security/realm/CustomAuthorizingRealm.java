@@ -23,11 +23,11 @@ public class CustomAuthorizingRealm extends AuthorizingRealm {
 
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-		UsernamePasswordToken upToken = (UsernamePasswordToken)token;
+		UsernamePasswordToken upToken = (UsernamePasswordToken) token;
 		User user = permission.getUserByUsername(upToken.getUsername());
 		if (user == null) {
-            throw new AuthenticationException();
-        }
+			throw new AuthenticationException();
+		}
 		return new SimpleAuthenticationInfo(user, user.getPassword(), getName());
 	}
 
@@ -43,6 +43,6 @@ public class CustomAuthorizingRealm extends AuthorizingRealm {
 			simpleAuthorizationInfo.addStringPermissions(permissions);
 		}
 
-        return simpleAuthorizationInfo;		
+		return simpleAuthorizationInfo;
 	}
 }
