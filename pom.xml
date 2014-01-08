@@ -6,10 +6,24 @@
 	<groupId>br.com.caelum.vraptor</groupId>
 	<artifactId>vraptor-shiro</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0-beta-1</version>
 
 	<name>vraptor-shiro</name>
-	<url>http://maven.apache.org</url>
+	<description>VRaptor Shiro Plugin provides support to security authentication, authorization, cryptography and session management by Apache Shiro.</description>
+	<url>https://github.com/dipold/vraptor-shiro</url>
+
+	<developers>
+		<developer>
+			<id>dipold</id>
+			<name>Rafael D. Dipold</name>
+			<email>dipold@gmail.com</email>
+			<url>https://github.com/dipold</url>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>-3</timezone>
+		</developer>
+	</developers>
 
 	<properties>
 		<java.version>1.7</java.version>
@@ -33,7 +47,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>vraptor-plugin-shiro</finalName>
+		<finalName>vraptor-shiro</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
