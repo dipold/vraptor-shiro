@@ -5,7 +5,7 @@
 	<groupId>br.com.caelum.vraptor</groupId>
 	<artifactId>vraptor-shiro</artifactId>
 	<packaging>jar</packaging>
-	<version>4.0.0-beta-1</version>
+	<version>4.0.0-beta-2-SNAPSHOT</version>
 
 	<name>vraptor-shiro</name>
 	<description>VRaptor Shiro Plugin provides support to security authentication, authorization, cryptography and session management by Apache Shiro.</description>
@@ -44,7 +44,7 @@
 		<url>https://github.com/dipold/vraptor-shiro</url>
 		<connection>scm:git:git://github.com/dipold/vraptor-shiro</connection>
 		<developerConnection>scm:git:git@github.com:dipold/vraptor-shiro.git</developerConnection>
-		<tag>vraptor-shiro-4.0.0-beta-1</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<properties>
