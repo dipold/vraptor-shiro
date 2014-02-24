@@ -5,7 +5,3 @@ VRaptor Shiro Plugin provides support to security authentication, authorization,
 ## Documentation
 
 Check out the [Getting Started and other Docs](https://github.com/dipold/vraptor-plugin-shiro/wiki)
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/dipold/vraptor-shiro/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
