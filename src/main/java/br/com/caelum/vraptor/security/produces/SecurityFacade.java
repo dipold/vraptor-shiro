@@ -70,12 +70,12 @@ public class SecurityFacade {
 		return list;
 	}
 
-	@Produces @SessionScoped
+	@Produces
 	public SecurityManager getSecurityManager() {
 		return SecurityUtils.getSecurityManager();
 	}
 
-	@Produces @SessionScoped
+	@Produces
 	public Subject getSubject() {
 		return SecurityUtils.getSubject();
 	}
@@ -85,7 +85,7 @@ public class SecurityFacade {
 		return SecurityUtils.getSubject().getSession();
 	}
 
-	@Produces @SessionScoped
+	@Produces
 	public PasswordService getPasswordService() {
 		return new DefaultPasswordService();
 	}
