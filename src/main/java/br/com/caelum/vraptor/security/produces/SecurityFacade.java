@@ -5,11 +5,12 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationListener;
@@ -29,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import br.com.caelum.vraptor.security.strategy.ShiroInitConfigStrategy;
 
-@Singleton 
+@ApplicationScoped
 public class SecurityFacade {
 
 	@Inject @Any private Instance<AuthenticationListener> authenticationListeners;
@@ -69,22 +70,22 @@ public class SecurityFacade {
 		return list;
 	}
 
-	@Produces
+	@Produces @SessionScoped
 	public SecurityManager getSecurityManager() {
 		return SecurityUtils.getSecurityManager();
 	}
 
-	@Produces
+	@Produces @SessionScoped
 	public Subject getSubject() {
 		return SecurityUtils.getSubject();
 	}
 
-	@Produces
+	@Produces @SessionScoped
 	public Session getSession() {
 		return SecurityUtils.getSubject().getSession();
 	}
 
-	@Produces
+	@Produces @SessionScoped
 	public PasswordService getPasswordService() {
 		return new DefaultPasswordService();
 	}
