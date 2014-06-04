@@ -82,7 +82,7 @@ public class SecurityFacade {
 
 	@Produces @SessionScoped
 	public Session getSession() {
-		return SecurityUtils.getSubject().getSession();
+		return new SafeSession(SecurityUtils.getSubject().getSession());
 	}
 
 	@Produces
