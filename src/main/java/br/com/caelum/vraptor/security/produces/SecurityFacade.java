@@ -75,14 +75,14 @@ public class SecurityFacade {
 		return SecurityUtils.getSecurityManager();
 	}
 
-	@Produces
+	@Produces @SessionScoped
 	public Subject getSubject() {
-		return SecurityUtils.getSubject();
+		return new SafeSubject( SecurityUtils.getSubject() );
 	}
 
 	@Produces @SessionScoped
 	public Session getSession() {
-		return new SafeSession(SecurityUtils.getSubject().getSession());
+		return new SafeSession( getSubject().getSession() );
 	}
 
 	@Produces
