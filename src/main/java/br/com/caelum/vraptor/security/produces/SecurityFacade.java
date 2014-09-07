@@ -5,12 +5,13 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Startup;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationListener;
@@ -30,7 +31,8 @@ import org.slf4j.LoggerFactory;
 
 import br.com.caelum.vraptor.security.strategy.ShiroInitConfigStrategy;
 
-@ApplicationScoped
+@Startup
+@Singleton
 public class SecurityFacade {
 
 	@Inject @Any private Instance<AuthenticationListener> authenticationListeners;
