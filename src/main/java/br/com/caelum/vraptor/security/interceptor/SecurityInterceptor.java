@@ -24,7 +24,7 @@ import br.com.caelum.vraptor.security.annotation.Secured;
 @Interceptor
 @Secured
 public class SecurityInterceptor extends AnnotationsAuthorizingMethodInterceptor {
-
+	
 	@Inject private AuthorizationRestrictionListener listener;
 	@Inject private Subject subject;
 	
@@ -33,7 +33,6 @@ public class SecurityInterceptor extends AnnotationsAuthorizingMethodInterceptor
 	@AroundInvoke
 	public Object check(InvocationContext ctx) throws Exception {
 		try {
-			System.out.println("Starting vraptor-shiro security validation.");
 			Class<?> c = ctx.getTarget().getClass();
 	        Method m = ctx.getMethod();
 
@@ -66,7 +65,7 @@ public class SecurityInterceptor extends AnnotationsAuthorizingMethodInterceptor
 		}
 		return null;
 	}
-	
+
 	private static boolean hasAnnotation(Class<?> c, Method m, Class<? extends Annotation> a) {
         return m.isAnnotationPresent(a)
             || c.isAnnotationPresent(a)
