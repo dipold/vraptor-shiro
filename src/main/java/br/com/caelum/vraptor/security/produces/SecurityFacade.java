@@ -7,10 +7,12 @@ import java.util.Collection;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.SessionScoped;
+import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationListener;
@@ -30,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import br.com.caelum.vraptor.security.strategy.ShiroInitConfigStrategy;
 
-@ApplicationScoped
+@Singleton
 public class SecurityFacade {
 
 	@Inject @Any private Instance<AuthenticationListener> authenticationListeners;
@@ -40,8 +42,8 @@ public class SecurityFacade {
 
 	private static final Logger log = LoggerFactory.getLogger(SecurityFacade.class);
 
-	@PostConstruct
-	public void init() {
+	public void init(@Observes VRaptorShiroInit initEvent) {
+		log.info(initEvent.getMessage());
 		log.info("Initializing Shiro SecurityManager");
 
 		ModularRealmAuthenticator authenticator = new ModularRealmAuthenticator();
